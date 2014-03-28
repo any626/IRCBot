@@ -6,24 +6,23 @@ set_time_limit(0);
 
 class IRCBot{
 
+    private $loop = true;
     private $stream = null; 
 
     private $info = array(
-        "address" => "holmes.freenode.net",
+        "address" => "irc.internetbrands.com",
         "port" => 6667, 
-        "user" => "kazaamBot1111", 
+        "user" => "kazaamthemagicalbot", 
         "hostname" => "www.github.com/any626", 
         "servername" => "any626", 
         "realname" => "tron", 
-        "nick" => "kazaamBot1111",
-        "channel" => "#ale213");
+        "nick" => "kazaam",
+        "channel" => "#ale");
 
     private $voters = null;
 
     public function __construct(){
-
-        $this->stream = stream_socket_client("tcp://". $this->info['address']. ":" . $this->info['port'], $errno, $errstr, 30);
-        
+        $this->stream = stream_socket_client("tcp://". $this->info['address']. ":" . $this->info['port'], $errno, $errstr, 10);
         if(!$this->stream){
             echo "$errstr: $errno <br/>";
         } else {
@@ -37,11 +36,12 @@ class IRCBot{
 
         $user = fwrite($this->stream, "USER " . $this->info['user'] . " " . $this->info['hostname'] . " " . $this->info['servername'] . " " .$this->info['realname']."\r\n");
         $nick = fwrite($this->stream, "NICK " . $this->info['nick'] . "\r\n");
-        $channel = fwrite($this->stream, "JOIN " . $this->info['channel']. "\r\n");    }
+        $channel = fwrite($this->stream, "JOIN " . $this->info['channel']. "\r\n");
+    }
 
     private function core(){
         //infinite loop
-        while(true){
+        while($this->loop){
 
             //gets lines in chat
             $line = fgets($this->stream, 1024);
@@ -53,21 +53,19 @@ class IRCBot{
                 fwrite($this->stream, "PRIVMSG " . $this->info['channel'] . " :whats up\r\n");
             } else if(strpos($line, "!quit") !== false){
                 fwrite($this->stream, "QUIT\r\n");
-                exit;
-            } else if(strpos($line, "!round") !== false){
-
+                fclose($this->stream);
+                $this->loop = false;
+            } else if(strpos($line, "!random") !== false){
+                $number = rand();
+                fwrite($this->stream, "PRIVMSG " . $this->info['channel'] . " " . $number . "\r\n");
             }
-
+            // need to add voting in
         }
     }
 
-    private function voting(){
-        
-
+    public function getInfo(){
+        return $this->info;
     }
 
-
 }
-$bot = new IRCBot();
-
 ?>
