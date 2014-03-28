@@ -58,14 +58,12 @@ class IRCBot{
             } else if(strpos($line, "!random") !== false){
                 $number = rand();
                 fwrite($this->stream, "PRIVMSG " . $this->info['channel'] . " " . $number . "\r\n");
+            } else if(strpos($line, "!vote") !== false){
+                require_once('DirectionVoting.php');
+                $DVoting = new DirectionVoting($this->stream, $this->info);
             }
             // need to add voting in
         }
     }
-
-    public function getInfo(){
-        return $this->info;
-    }
-
 }
 ?>

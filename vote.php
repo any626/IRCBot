@@ -6,11 +6,9 @@ abstract class Vote{
 	private $voters = array();
 	private $votes = null;
 
-	abstract private function commands(){
-	}
+	abstract public function commands();
 
-	abstract private function system(){
-	}
+	abstract public function system();
 
 	private function getLine(){
 		return fgets($this->stream,1024);
